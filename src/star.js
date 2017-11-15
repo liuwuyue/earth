@@ -9,7 +9,7 @@ import util from './util';
 //视野深度
 const size = 1000;
 //星星个数
-const total = 5000;
+const total = 2000;
 const name = 'particle';
 //闪烁 变化的步长
 const step = 0.03;

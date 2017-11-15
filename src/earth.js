@@ -14,9 +14,9 @@ const depth = 1000;
 //球体半径
 const radius = 100;
 //每条线的总点数
-const count = 30;
+const count = 20;
 //步长
-const step = 3;
+const step = 2;
 //中心点
 const center = {
   x: 0,
@@ -25,6 +25,7 @@ const center = {
 };
 const lineWidthMax = .8;
 const lineWidthMin = .6;
+const itemSize = 3;
 class Earth extends React.PureComponent {
   render () {
     return (
@@ -40,14 +41,10 @@ class Earth extends React.PureComponent {
       useMap: true
     });
     this.props.data.forEach((item, index) => {
-      /*
-      let lng = item.from[0];
-      let lat = item.from[1];
-      */
       let lng = item.lnglat[0];
       let lat = item.lnglat[1];
       let t = Math.random();
-      let max = radius + Math.random() * radius;
+      let max = radius + Math.random() * radius / 5;
       //获取起始点
       let p1 = util.lnglatToXYZ({lng, lat}, radius);
       let p2 = util.lnglatToXYZ({lng, lat}, max);
@@ -68,7 +65,7 @@ class Earth extends React.PureComponent {
       mesh.name = 'line-' + index;
       //记录当前的线条位置
       let _count = Math.floor(t * mesh.geometry.attributes.position.count);
-      mesh.geometry.setDrawRange(0, _count);
+      mesh.geometry.setDrawRange(0, _count * itemSize);
       //记录变化方向
       mesh._direction = Math.random() > 0.5 ? 1 : -1;
       group.add(mesh);
@@ -78,7 +75,7 @@ class Earth extends React.PureComponent {
     let canvas = document.createElement('canvas');
     let width = 2048;
     let height = 1024;
-    let size = 30;
+    let size = 40;
     canvas.width = width;
     canvas.height = height;
     let ctx = canvas.getContext('2d');
@@ -124,7 +121,6 @@ class Earth extends React.PureComponent {
     let group = new THREE.Group();
     //加载纹理
     this.getTexture().then((texture) => {
-      console.log(texture);
       //地球添加
       let earthMesh = new THREE.Mesh(
         new THREE.SphereGeometry(radius, 128, 128),
@@ -147,13 +143,13 @@ class Earth extends React.PureComponent {
             //处理line
             let size = item.geometry.attributes.position.count;
             let tmpCount = item.geometry.drawRange.count;
-            if (tmpCount > size) {
+            if (tmpCount > size * itemSize) {
               item._direction = -1;
             } else if (tmpCount <= 0) {
               item._direction = 1;
             }
             let tmpStep = Math.ceil(Math.random() * step);
-            let next = tmpCount + item._direction * tmpStep;
+            let next = tmpCount + item._direction * tmpStep * itemSize;
             item.geometry.setDrawRange(0, next);
           }
         });

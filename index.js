@@ -7,7 +7,7 @@ import Star from './src/star';
 import Earth from './src/earth'; 
 import globalData from './globalData.json';
 import EarthSpline from './src/earthSpline';
-let type = 1;
+let type = /line/.test(location.href) ? 1 : 0;
 let child = null;
 switch (type) {
   case 0:
@@ -34,7 +34,7 @@ switch (type) {
 }
 ReactDOM.render(
   <div>
-    {/*<Star></Star>*/}
+    <Star></Star>
     {child}
   </div>,
   document.querySelector('#app')  
