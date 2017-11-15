@@ -23,8 +23,8 @@ const center = {
   y: 0,
   z: 0
 };
-const lineWidthMax = .8;
-const lineWidthMin = .6;
+const lineWidthMax = 0;
+const lineWidthMin = .8;
 const itemSize = 3;
 class Earth extends React.PureComponent {
   render () {
@@ -69,8 +69,7 @@ class Earth extends React.PureComponent {
       geometry.vertices = curve.getPoints(count);
       //构造线
       let line = new MeshLine();
-      //line.setGeometry(geometry, (p) => (1 - p) * lineWidthMax + p * lineWidthMin);
-      line.setGeometry(geometry, () => 1);
+      line.setGeometry(geometry, p => (1 - p) * lineWidthMax + p * lineWidthMin);
       //线条生成
       let mesh = new THREE.Mesh(line.geometry, material);
       //设置name 便于后续发现控制 ，生成动画

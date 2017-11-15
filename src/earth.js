@@ -24,7 +24,7 @@ const center = {
   z: 0
 };
 const lineWidthMax = .8;
-const lineWidthMin = .6;
+const lineWidthMin = 0;
 const itemSize = 3;
 class Earth extends React.PureComponent {
   render () {
