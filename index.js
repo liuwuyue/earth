@@ -6,12 +6,36 @@ import Star from './src/star';
 //地球
 import Earth from './src/earth'; 
 import globalData from './globalData.json';
-console.log(globalData);
+import EarthSpline from './src/earthSpline';
+let type = 1;
+let child = null;
+switch (type) {
+  case 0:
+    child = (
+      <Earth data={globalData}></Earth>
+    );
+    break;
+  case 1:
+    let data = globalData;
+    let length = globalData.length;
+    let lines = [];
+    for (let i = 0; i < length; i++) {
+      let p = Math.floor(Math.random() * length) 
+      let q = Math.floor(Math.random() * length) 
+      lines.push({
+        start: globalData[p],
+        end: globalData[q]   
+      });
+    }
+    child = (
+      <EarthSpline data={globalData} lines={lines}></EarthSpline>
+    );
+    break;
+}
 ReactDOM.render(
-
   <div>
-    <Star></Star>
-    <Earth data={globalData}></Earth>
+    {/*<Star></Star>*/}
+    {child}
   </div>,
   document.querySelector('#app')  
 );
