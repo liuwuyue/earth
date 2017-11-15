@@ -12,13 +12,13 @@ const size = 1000;
 const total = 5000;
 const name = 'particle';
 //闪烁 变化的步长
-const step = 0.02;
+const step = 0.03;
 //流行滑动的步长
 const fallingStep = 0.02;
 //变化的范围
 const range = 6;
 const minScale = 4;
-const maxScale = 10;
+const maxScale = 12;
 class Star extends React.PureComponent {
   render () {
     return (
