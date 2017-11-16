@@ -15,6 +15,8 @@ const depth = 1000;
 const radius = 100;
 //每条线的总点数
 const count = 30;
+//最大到10倍
+const times = 6;
 //步长
 const step = 1;
 //中心点
@@ -74,11 +76,16 @@ class Earth extends React.PureComponent {
       let mesh = new THREE.Mesh(line.geometry, material);
       //设置name 便于后续发现控制 ，生成动画
       mesh.name = 'line-' + index;
-      //记录当前的线条位置
-      let tmpCount = Math.floor(t * mesh.geometry.attributes.position.count);
-      mesh.geometry.setDrawRange(0, tmpCount * 3);
-      //记录变化方向
-      mesh._direction = Math.random() > 0.5 ? 1 : -1;
+      //记录当前的线条位置 点数的10倍 只有 0-1之间才显示
+      let size = mesh.geometry.attributes.position.count;
+      let tmpCount = Math.floor(Math.random() * size * times) * itemSize;
+      mesh.geometry._tmpCount = tmpCount;
+      //在合理的范围之内才显示
+      if (tmpCount <= size * itemSize) {
+        mesh.geometry.setDrawRange(0, tmpCount);
+      } else {
+        mesh.geometry.setDrawRange(0, 0);
+      }
       group.add(mesh);
     });
   }
@@ -143,25 +150,36 @@ class Earth extends React.PureComponent {
       earthMesh.position.set(center.x, center.y, center.z);
       group.add(earthMesh);
       this.addLines(group);
+      //group.rotation.y += Math.PI;
       scene.add(group);
       animate();
       function animate () {
         requestAnimationFrame(animate);
         group.rotation.y += 0.01;
-        //group.rotation.x += 0.001;
         group.children.forEach((item) => {
           if (/line/.test(item.name)) {
             //处理line
             let size = item.geometry.attributes.position.count * itemSize;
-            let tmpCount = item.geometry.drawRange.count;
-            if (tmpCount > size) {
-              item._direction = -1;
-            } else if (tmpCount <= 0) {
-              item._direction = 1;
+            let tmpCount = item.geometry._tmpCount;
+            if (tmpCount > size * times) {
+              tmpCount = 0;
             }
-            let tmpStep = Math.ceil(Math.random() * step);
-            let next = tmpCount + item._direction * tmpStep * itemSize;
-            item.geometry.setDrawRange(0, next);
+            let next = tmpCount + step * itemSize;
+            item.geometry._tmpCount = next;
+            //延迟一段 20个点时间之后再消失
+            let delay = 20 * itemSize;
+            //在合理的范围之内才显示
+            if (next < size + delay) {
+              item.geometry.setDrawRange(0, next);
+            } else {
+              if (item.geometry.drawRange.count > 0) {
+                //逐渐缩短 每次短一半 视觉效果上 不会消失的那么突兀
+                //item.geometry.setDrawRange(0, Math.floor((item.geometry.drawRange.count / itemSize) / 2) * itemSize);
+                //每次 减少10分之1 消失的效果 平滑
+                let tCount =  item.geometry.drawRange.count -  Math.floor(item.geometry.attributes.position.count / 5) * itemSize;
+                item.geometry.setDrawRange(0, tCount > 0 ? tCount : 0);
+              }
+            }
           }
         });
         renderer.render(scene, camera);
