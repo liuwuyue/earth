@@ -7,7 +7,7 @@
     "index": "./index.js"
   },
   "scripts": {
-    "build": "atool-build -o ./dist/app",
+    "build": "atool-build --config webpack.config.build.js",
     "start": "dora --plugins webpack,webpack-hmr"
   },
   "author": "wuyue.lwy@alibaba-inc.com",
